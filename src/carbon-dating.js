@@ -13,6 +13,7 @@ module.exports = function dateSample(sampleActivity) {
   const parsedSample = parseFloat(sampleActivity);
 
   if(parsedSample <= 0 || parsedSample > 15) return false;
+  if((typeof(parsedSample) != 'number') || (parsedSample + '' === 'NaN')) return false;
 
   const firstOrder = 0.693;
   const k = firstOrder / HALF_LIFE_PERIOD;
