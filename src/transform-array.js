@@ -3,50 +3,22 @@ const CustomError = require("../extensions/custom-error");
 module.exports = function transform(arr) {
   if (!(arr instanceof Array)) throw new Error('Error');
 
-  for (let i = 0; i < arr.length; i++) {
-    switch (arr[i]) {
-      case '--discard-next':
-        if (typeof arr[i + 1] === 'number') {
-          arr.splice(i + 1, 1);
-        }
-        break;
-      case '--discard-prev':
-        if (typeof arr[i - 1] === 'number') {
-          arr.splice(i - 1, 1);
-        }
-        break;
-      case '--double-next':  
-        if (typeof arr[i + 1] === 'number') {
-          arr.splice(i + 1, 0, arr[i + 1]);
-        }
-        break;
-      case '--double-prev':
-        if (typeof arr[i - 1] === 'number') {
-          arr.splice(i, 0, arr[i - 1]);
-        }
-        i++;
-        break;
+  return arr.reduce((accum, currElement, index) => {
+    if (currElement === '--discard-next') {
+      accum[index] = undefined;
+      accum[index + 1] = undefined;
     }
-  }
-
-  for (let i = 0; i < arr.length; i++) {
-    switch (arr[i]) {
-      case '--discard-next':
-        arr.splice(i--, 1);
-        break;
-      case '--discard-prev':
-        arr.splice(i--, 1);
-        break;
-      case '--double-next':
-        arr.splice(i--, 1);
-        break;
-      case '--double-prev':
-        arr.splice(i--, 1);
-        break;
+    else if (currElement === '--discard-prev') {
+      accum[index] = undefined;
+      accum[index - 1] = undefined;
     }
-  }
-
-  return arr;
-
+    else if (currElement === '--double-next') {
+      accum[index] = accum[index + 1];
+    }
+    else if (currElement === '--double-prev') {
+      accum[index] = accum[index - 1];
+    }
+    return accum
+  }, [...arr]).filter(element => element !== undefined);
 
 };
